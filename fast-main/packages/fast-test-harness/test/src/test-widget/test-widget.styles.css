@@ -1,7 +1,0 @@
-:host {
-    display: inline-block;
-
-    .label {
-        font-weight: bold;
-    }
-}
