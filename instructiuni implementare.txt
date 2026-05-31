@@ -1,1 +1,162 @@
- Plan de Dezvoltare: Server Voxel Smart (Raw Data Mode)Pasul 1: Infrastructura de bază și Găzduirea Securizată (Kata)Ce facem: Configurăm mediul izolat hardware pentru securitate anti-cheat.Acțiuni:Instalează și configurează Kata Containers pe mașina de dezvoltare (folosind virtualizarea nativă din procesor, ex: AMD SVM).Creează o imagine minimalistă de container (bază Linux ușoară, ex: Alpine sau Ubuntu Minimal).Compilează serverul open-source Cuberite (C++) direct pentru acest mediu și rulează-l în interiorul containerului Kata.Rezultat: Serverul de voxeli rulează izolat hardware, complet protejat de exterior.Pasul 2: Dirijorul și Monitorizarea (.NET Aspire)Ce facem: Legăm componentele și activăm panoul de control pentru performanță.Acțiuni:Instalează .NET Aspire CLI local.Creează un proiect de tip AppHost (în C# sau TypeScript).Definește în cod pornirea containerului Kata (care conține Cuberite) și configurează colectarea de metrici OpenTelemetry.Rezultat: Deschizi Dashboard-ul Aspire în browser și vezi în timp real procesorul, RAM-ul și logurile brute din Cuberite.Pasul 3: Interfața Web Minimalistă (FAST.js & SimpleChat)Ce facem: Înlocuim temporar clientul de joc 3D cu o consolă web ultra-rapidă.Acțiuni:Construiește un frontend web simplu folosind componente native FAST.js (fără framework-uri grele, zero Virtual DOM).Integrează standardul SimpleChat în interfață pentru a crea o fereastră de chat curată.Adaugă acest frontend în orchestratorul .NET Aspire ca un serviciu web conectat la Cuberite prin WebSockets/HTTP.Rezultat: Ai o pagină web care se încarcă instant și îți permite să trimiți comenzi tip text direct în serverul Cuberite.Pasul 4: Integrarea „Creierului” AI Low-Profile (Fara-7B / BitNet)Ce facem: Adăugăm modelul local de inteligență artificială, optimizat pe biți puțini.Acțiuni:Descarcă modelul Fara-7B (optimizat pentru Computer Use/Sarcini Agentice) și rulează-l local.(Opțional pentru optimizare brută): Rulează modelul prin kernelul bitnet.cpp pentru a transforma calculele grele în simple adunări matematice pe CPU.Adaugă acest serviciu AI în .NET Aspire, dar setează-l în modul Lazy Loading (să fie în stare de repaus/Oprit până primește un task).Rezultat: AI-ul este pregătit pe SSD, consumând 0% resurse în timp ce serverul rulează în gol.Pasul 5: Protocolul de Comunicare (Agent-Host-Protocol)Ce facem: Învățăm AI-ul și Serverul să vorbească prin date structurate, nu prin povești.Acțiuni:Implementează Agent-Host-Protocol (sau un sistem similar de Function Calling) pentru a face puntea între Fara-7B și scripturile din Cuberite.Definește scheme clare de date binare sau JSON-uri scurte. (Exemplu: dacă utilizatorul scrie „Zid”, AI-ul trebuie să returneze strict cod binar: [ID_ACTION: 2, X: 10, Y: 64, Z: 5, LENGTH: 10]).Rezultat: AI-ul poate trimite instrucțiuni directe de modificare a hărții în serverul Cuberite.Pasul 6: Testarea Agenților de Task și a Rutării InteligenteCe facem: Testul suprem de funcționalitate brută și economie de resurse.Acțiuni:Scrie în fereastra de chat din FAST.js o comandă complexă: „Construiește o structură de piatră la coordonatele 0,64,0”.Verifică fluxul automat: Aspire trezește Fara-7B $\rightarrow$ Fara-7B procesează promptul $\rightarrow$ Scoate comanda prin Agent-Host-Protocol $\rightarrow$ Cuberite execută modificarea blocurilor în memorie $\rightarrow$ Aspire adoarme modelul AI.Urmărește în Dashboard-ul Aspire ca load-ul pe CPU și RAM să scadă înapoi la minimum imediat ce construcția s-a terminat.Rezultat: Ai validat că tot sistemul hibrid funcționează perfect, securizat și cu un consum ridicol de mic de date.Instrucțiune pentru următorul AI: „Urmează acești pași în ordine strictă. Concentrează-te pe scrierea codului de legătură (C++, C# și TypeScript curat pentru FAST) și pe configurarea corectă a rețelei locale (localhost) între procesele gestionate de Aspire. Ignoră orice componentă de randare 3D sau motor grafic pentru moment.”
+# 📋 Plan de Dezvoltare: Server Voxel Smart (Raw Data Mode)
+
+### Pasul 1: Infrastructura de bază și Găzduirea Securizată (Kata)
+```bash
+gh repo clone kata-containers/kata-containers
+# Serverul voxel de bază
+git clone [https://github.com/cuberite/cuberite.git](https://github.com/cuberite/cuberite.git)
+Ce facem: Configurăm mediul izolat hardware pentru securitate anti-cheat.
+
+Acțiuni:
+
+Instalează și configurează Kata Containers pe mașina de dezvoltare (folosind virtualizarea nativă din procesor, ex: AMD SVM).
+
+Creează o imagine minimalistă de container (bază Linux ușoară, ex: Alpine sau Ubuntu Minimal).
+
+Compilează serverul open-source Cuberite (C++) direct pentru acest mediu și rulează-l în interiorul containerului Kata.
+
+Rezultat: Serverul de voxeli rulează izolat hardware, complet protejat de exterior.
+
+Pasul 2: Dirijorul și Monitorizarea (.NET Aspire)
+Bash
+gh repo clone dotnet/aspire
+Ce facem: Legăm componentele și activăm panoul de control pentru performanță.
+
+Acțiuni:
+
+Instalează .NET Aspire CLI local.
+
+Creează un proiect de tip AppHost în C#.
+
+Definește în cod pornirea containerului Kata (care conține Cuberite) și configurează colectarea de metrici OpenTelemetry.
+
+Rezultat: Deschizi Dashboard-ul Aspire în browser și vezi în timp real procesorul, RAM-ul și logurile brute din Cuberite.
+
+Pasul 3: Interfața Web Minimalistă (FAST.js & SimpleChat)
+Bash
+gh repo clone microsoft/fast
+# Standardul/UI-ul ușor de chat ales
+gh repo clone microsoft/simplechat
+Ce facem: Înlocuim temporar clientul de joc 3D cu o consolă web ultra-rapidă.
+
+Acțiuni:
+
+Construiește un frontend web simplu folosind componente native FAST.js (fără framework-uri grele, zero Virtual DOM).
+
+Integrează standardul SimpleChat în interfață pentru a crea o fereastră de chat curată.
+
+Adaugă acest frontend în orchestratorul .NET Aspire ca un serviciu web conectat la Cuberite prin WebSockets/HTTP.
+
+Rezultat: Ai o pagină web care se încarcă instant și îți permite să trimiți comenzi tip text direct în serverul Cuberite.
+
+Pasul 4: Integrarea „Creierului” AI Low-Profile (Fara-7B / BitNet)
+Bash
+# Nucleul de procesare 1-bit al Microsoft
+gh repo clone microsoft/BitNet
+# Modelul Fara-7B (descărcat local ca fișier GGUF din sursele deschise)
+Ce facem: Adăugăm modelul local de inteligență artificială, optimizat pe biți puțini.
+
+Acțiuni:
+
+Descarcă modelul Fara-7B (optimizat pentru Computer Use/Sarcini Agentice) în format compatibil local (GGUF).
+
+Rulează modelul prin kernelul bitnet.cpp pentru a transforma calculele grele în simple adunări matematice pe CPU.
+
+Adaugă acest serviciu AI în .NET Aspire, ale cărui resurse sunt setate în modul Lazy Loading (să fie în stare de repaus/Oprit până primește un task).
+
+Rezultat: AI-ul este pregătit pe SSD, consumând 0% resurse în timp ce serverul rulează în gol.
+
+Pasul 5: Protocolul de Comunicare (Agent-Host-Protocol)
+Bash
+# Framework-ul deschis Microsoft pentru comunicarea structurală a agenților (Semantic Kernel sau AutoGen)
+gh repo clone microsoft/autogen
+Ce facem: Învățăm AI-ul și Serverul să vorbească prin date structurate (Agent-Host-Protocol / Function Calling), nu prin povești.
+
+Acțiuni:
+
+Implementează protocolul de mesagerie structurală pentru a face puntea între Fara-7B și scripturile din Cuberite.
+
+Definește scheme clare de date binare sau JSON-uri scurte. (Exemplu: dacă utilizatorul scrie „Zid”, AI-ul trebuie să returneze strict format structurat: [ID_ACTION: 2, X: 10, Y: 64, Z: 5, LENGTH: 10]).
+
+Rezultat: AI-ul poate trimite instrucțiuni directe de modificare a hărții în serverul Cuberite.
+
+Pasul 6: Testarea Agenților de Task și a Rutării Inteligente
+Ce facem: Testul suprem de funcționalitate brută și economie de resurse.
+
+Acțiuni:
+
+Scrie în legenda de chat din FAST.js o comandă complexă: „Construiește o structură de piatră la coordonatele 0,64,0”.
+
+Verifică fluxul automat: Aspire trezește Fara-7B ➔ Fara-7B procesează promptul ➔ Scoate comanda prin protocol ➔ Cuberite execută modificarea blocurilor în memorie ➔ Aspire adoarme modelul AI.
+
+Urmărește în Dashboard-ul Aspire ca load-ul pe CPU și RAM să scadă înapoi la minimum imediat ce construcția s-a terminat.
+
+Rezultat: Ai validat că tot sistemul hibrid funcționează perfect, securizat și cu un consum ridicol de mic de date.
+
+⚠️ Instrucțiune pentru următorul AI: „Urmează acești pași în ordine strictă. Concentrează-te pe scrierea codului de legătură (C++, C# și TypeScript curat pentru FAST) și pe configurarea corectă a rețelei locale (localhost) între procesele gestionate de Aspire. Ignoră orice componentă de randare 3D sau motor grafic pentru moment.”
+
+
+
+ver2
+
+În loc să facem un dashboard web extern unde să tastezi comenzi ca un administrator de rețea, chat-ul nativ din joc devine interfața principală și unică de control. Jucătorul sau youtuberul nu trebuie să iasă din joc; el doar apasă tasta „T”, scrie un mesaj normal în chat (ex: „Ajută-mă să sap tunelul ăsta”), iar toată mașinăria din spate pornește automat.
+
+Uite cum se modifică fluxul de comunicare brută (Raw Data) pentru a folosi chat-ul nativ din Cuberite:
+
+Cum funcționează fluxul prin Chat-ul Nativ (Fără FAST.js în joc)
+Deoarece Cuberite este un server complet de Minecraft (scris în C++), el are deja integrat un sistem de chat nativ care primește text de la clienții conectați. Nu mai trebuie să desenăm noi ferestre de chat.
+
+Jucătorul trimite un mesaj: Scrie în chat-ul jocului: Bot, fă un zid aici.
+
+Cuberite interceptează textul: Serverul Cuberite are un sistem de plugin-uri în Lua sau direct cârlige (hooks) în C++ care ascultă tot ce se scrie. Cuberite prinde mesajul și vede că începe cu cuvântul cheie „Bot”.
+
+Puntea către Aspire: Cuberite trimite acest text brut prin rețeaua internă configurată de .NET Aspire către procesul în care se află Agent Framework.
+
+Trezirea AI-ului: Aspire pornește instanța din containerul Kata unde se află Fara-7B.
+
+Traducerea în acțiune: Fara-7B procesează textul, înțelege intenția și trimite înapoi instrucțiunea binară prin Agent-Host-Protocol (ex: Action: Build, Block: Stone, X: 100, Y: 64, Z: 200).
+
+Execuția vizibilă: Cuberite primește numerele și plasează blocurile instantaneu în fața jucătorului. În același timp, AI-ul poate trimite un mesaj text înapoi în chat: [Bot]: Am început construcția zidului!.
+
+Cum se modifică Planul de Dezvoltare (Varianta actualizată pentru testul brut)
+Pentru că ai eliminat componenta web din joc, Pasul 3 devine mult mai simplu, axat pe logica internă a serverului:
+
+Markdown
+# 📋 Plan de Dezvoltare Actualizat: Server Voxel Smart (In-Game Chat Mode)
+
+### Pasul 1: Infrastructura de bază și Găzduirea Securizată (Kata)
+```bash
+gh repo clone kata-containers/kata-containers
+git clone [https://github.com/cuberite/cuberite.git](https://github.com/cuberite/cuberite.git)
+Acțiuni: Configurează Kata Containers (AMD SVM) și rulează serverul Cuberite C++ în interiorul containerului izolat.
+
+Pasul 2: Dirijorul și Monitorizarea (.NET Aspire)
+Bash
+gh repo clone dotnet/aspire
+Acțiuni: Creează proiectul AppHost în C# pentru a gestiona pornirea containerului Kata și monitorizarea performanței pe CPU/RAM.
+
+Pasul 3: Fereastra de Chat și Interceptarea Textului (Nativ Cuberite)
+Bash
+# Înlocuim FAST.js cu un script/plugin ușor de intercepție în Cuberite
+Ce facem: În loc de interfață web, scriem un cârlig (Hook) în C++ sau un script simplu în Lua în interiorul Cuberite care ascultă evenimentul HOOK_CHAT.
+
+Acțiuni: Când un jucător scrie un mesaj care începe cu un prefix (ex: !bot), Cuberite oprește mesajul din a fi trimis global și îl trimite prin WebSockets/HTTP local către .NET Aspire.
+
+Rezultat: Ai legat chat-ul fizic din joc direct de exterior.
+
+Pasul 4: Creierul AI Low-Profile & Lazy Loading (Fara-7B / BitNet)
+Bash
+gh repo clone microsoft/BitNet
+Acțiuni: Configurează Fara-7B prin bitnet.cpp în regim de Lazy Loading prin Aspire. AI-ul stă oprit până când scriptul din Pasul 3 detectează un mesaj în chat-ul jocului.
+
+Pasul 5: Execuția prin Agent-Host-Protocol
+Bash
+gh repo clone microsoft/autogen
+Acțiuni: Implementează protocolul prin care Fara-7B traduce textul din chat în comenzi de blocuri (coordonate X, Y, Z) și le trimite înapoi la Cuberite pentru execuție imediată.
+
+Pasul 6: Testul Brut în Joc
+Acțiuni: Te conectezi cu un client de joc la serverul Cuberite local, deschizi chat-ul nativ, tastezi comanda și urmărești în Dashboard-ul Aspire cum AI-ul se trezește, modifică lumea din jurul tău și adoarme la loc, lăsând procesorul liber.
+
+
+### Cu ce ne ajută asta la timp?
+Eliminarea interfeței FAST.js din ecuația jocului scade timpul de dezvoltare pentru acest demo cu
